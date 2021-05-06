@@ -7,14 +7,14 @@
 <body>
 <div id="app" class="container mt-5">
     <div class="row">
-        <vue-dynamic-form v-model="demoFormMeta" @submit="handleSubmit" @validate="handleValidate" required-text="required" select-text="Select..."></vue-dynamic-form>
+        <vue3-dynamic-form v-model="demoFormMeta" @submit="handleSubmit" @validate="handleValidate" required-text="required" select-text="Select..."></vue3-dynamic-form>
         <div v-if="!valid" class="text-danger">
             Form is not valid
         </div>
     </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-<script src="../dist/js/vue-dynamic-form.min.js"></script>
+<script src="../dist/js/vue3-dynamic-form.min.js"></script>
 <script>
     const demoFormMeta = {
         controlSections: [
@@ -28,9 +28,9 @@
                         controls: [
                             {
                                 name: "area_scope",
-                                type: "multiselect",
+                                type: "select",
                                 options: [{id: "MWI", label: "Malawi"}, {id: "MWI.1", label: "Central"}],
-                                value: ["MWI", "MWI.1"],
+                                value: "MWI",
                                 required: true
                             }]
                     },
@@ -39,7 +39,7 @@
                         controls: [
                             {
                                 name: "area_level",
-                                type: "multiselect",
+                                type: "select",
                                 options: [{id: "q1", label: "Apr - Jun 2015"}, {id: "q2", label: "Jul - Sep 2015"}]
                             }]
                     }

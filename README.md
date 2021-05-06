@@ -1,17 +1,15 @@
-# vue-dynamic-form 
+# vue3-dynamic-form 
 
-[![Build Status](https://travis-ci.com/reside-ic/vue-dynamic-form.svg?branch=master)](https://travis-ci.com/reside-ic/vue-dynamic-form)
-
-Vue component for generating a form dynamically from metadata.
+Vue3-compatible component for generating a form dynamically from metadata.
 
 ## Installation
 * Install from npm:
   ```
-  npm install @reside-ic/vue-dynamic-form
+  npm install @reside-ic/vue3-dynamic-form
   ```
 * Import into your project and register as a global or local component:
   ```
-  import {DynamicForm} from "@reside-ic/vue-dynamic-form"
+  import {DynamicForm} from "@reside-ic/vue3-dynamic-form"
   
   // global
   Vue.component("dynamic-form", DynamicForm)
@@ -37,15 +35,15 @@ Vue component for generating a form dynamically from metadata.
 ### Browser
 
 To use the dynamic form component directly in the browser, 
-just include `dist/js/vue-dynamic-form.min.js` on the page, after Vue:
+just include `dist/js/vue3-dynamic-form.min.js` on the page, after Vue:
 
 ```
 <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-<script type="text/javascript" src="node_modules/@reside-ic/vue-dynamic-form/dist/vue-dynamic-form.min.js"></script>
+<script type="text/javascript" src="node_modules/@reside-ic/vue3-dynamic-form/dist/vue3-dynamic-form.min.js"></script>
 ```
 
 In this case the component will be automatically registered. 
-See [example/index.html](https://reside-ic.github.io/vue-dynamic-form/example/index.html).
+See [example/index.html](https://reside-ic.github.io/vue3-dynamic-form/example/index.html).
 
 ## Usage
 ### Example
@@ -81,9 +79,9 @@ const myFormMeta = {
                     controls: [
                         {
                             name: "area_scope",
-                            type: "multiselect",
+                            type: "select",
                             options: [{id: "MWI", label: "Malawi"}, {id: "MWI.1", label: "Central"}],
-                            value: ["MWI","MWI.1"],
+                            value: "MWI",
                             required: true
                         }]
                 },
@@ -92,7 +90,7 @@ const myFormMeta = {
                     controls: [
                         {
                             name: "area_level",
-                            type: "multiselect",
+                            type: "select",
                             options: [{id: "q1", label: "Apr - Jun 2015"}, {id: "q2", label: "Jul - Sep 2015"}]
                         }]
                 }
@@ -157,7 +155,7 @@ the payload would be of the form:
 }
 ```
 
-See this as a working example [here](https://reside-ic.github.io/vue-dynamic-form/example/index.html)
+See this as a working example [here](https://reside-ic.github.io/vue3-dynamic-form/example/index.html)
 
 The form also emits a `validate` event when its valid state changes. The form is valid if all controls which are `required`
  have values. The valid event provides a single boolean parameter which is `true` is the form has become valid, `false` 

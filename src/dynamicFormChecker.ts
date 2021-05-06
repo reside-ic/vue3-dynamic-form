@@ -3,7 +3,6 @@ import {
     DynamicControlGroup,
     DynamicControlSection,
     DynamicFormMeta,
-    MultiSelectControl,
     NumberControl,
     Option,
     SelectControl
@@ -30,15 +29,6 @@ export function isSelectControl(object: any): object is SelectControl {
         && object.options.every((o: any) => isSelectOption(o))
 }
 
-export function isMultiSelectControl(object: any): object is MultiSelectControl {
-    return isControl(object)
-        && (object.value == undefined || typeof object.value == "string" ||
-            (Array.isArray(object.value) && object.value.every((v: any) => typeof v == "string")))
-        && object.type == "multiselect"
-        && Array.isArray(object.options)
-        && object.options.every((o: any) => isSelectOption(o))
-}
-
 export function isSelectOption(object: any): object is Option {
     return typeof object.id == "string"
         && typeof object.label == "string"
@@ -51,7 +41,7 @@ export function isDynamicControlGroup(object: any): object is DynamicControlGrou
     return (object.label == undefined || typeof object.label == "string")
         && Array.isArray(object.controls)
         && object.controls
-            .every((c: Control) => isNumberControl(c) || isSelectControl(c) || isMultiSelectControl(c))
+            .every((c: Control) => isNumberControl(c) || isSelectControl(c))
 }
 
 export function isDynamicControlSection(object: any): object is DynamicControlSection {

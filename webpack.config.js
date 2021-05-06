@@ -57,7 +57,7 @@ module.exports = [
         },
         entry: path.resolve(__dirname + '/src/plugin.js'),
         output: {
-            filename: 'js/vue-dynamic-form.min.js',
+            filename: 'js/vue3-dynamic-form.min.js',
             libraryTarget: 'window',
             library: 'vueDynamicForm'
         }
