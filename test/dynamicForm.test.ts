@@ -3,7 +3,7 @@ import {mount, shallowMount, Wrapper} from "@vue/test-utils";
 import DynamicFormComponent from "../src/DynamicForm.vue";
 import DynamicForm from "../src/DynamicForm.vue";
 import DynamicFormControlSection from "../src/DynamicFormControlSection.vue";
-import {DynamicControlSection, DynamicFormMeta, MultiSelectControl, NumberControl, SelectControl} from "../src/types";
+import {DynamicControlSection, DynamicFormMeta, NumberControl, SelectControl} from "../src/types";
 import DynamicFormControlGroup from "../src/DynamicFormControlGroup.vue";
 import DynamicFormControl from "../src/DynamicFormControl.vue";
 
@@ -33,23 +33,10 @@ describe('Dynamic form component', function () {
                         } as NumberControl,
                         {
                             name: "id_3",
-                            type: "multiselect",
-                            options: [{id: "opt1", label: "option 1"}],
-                            required: false,
-                            value: ["opt1", "opt2"]
-                        } as MultiSelectControl,
-                        {
-                            name: "id_4",
                             type: "select",
                             options: [{id: "opt2", label: "option 2"}],
                             required: true,
                             value: "opt1"
-                        } as SelectControl,
-                        {
-                            name: "id_5",
-                            type: "multiselect",
-                            options: [{id: "opt2", label: "option 2"}],
-                            required: false
                         } as SelectControl
                     ]
                 }]
@@ -137,12 +124,10 @@ describe('Dynamic form component', function () {
     it("emits event with serialised form data on button submit", async () => {
         const rendered = getWrapper(validFormMeta, {}, mount);
         rendered.find("button").trigger("click");
-        expect(rendered.emitted("submit")[0][0]).toStrictEqual({
+        expect(rendered.emitted("submit")!![0][0]).toStrictEqual({
             "id_1": null,
             "id_2": 10,
-            "id_3": ["opt1", "opt2"],
-            "id_4": "opt1",
-            "id_5": []
+            "id_3": "opt1"
         });
     });
 
@@ -153,8 +138,8 @@ describe('Dynamic form component', function () {
             .vm.$emit("confirm", "Param")
 
         await Vue.nextTick();
-        expect(rendered.emitted().confirm.length).toBe(1);
-        expect(rendered.emitted().confirm[0][0]).toBe("Param");
+        expect(rendered.emitted().confirm!!.length).toBe(1);
+        expect(rendered.emitted().confirm!![0][0]).toBe("Param");
     });
 
     it("emits event and returns serialised form data on programmatic submit", () => {
@@ -162,13 +147,11 @@ describe('Dynamic form component', function () {
         const expected = {
             "id_1": null,
             "id_2": 10,
-            "id_3": ["opt1", "opt2"],
-            "id_4": "opt1",
-            "id_5": []
+            "id_3": "opt1"
         };
 
         const result = (rendered.vm as any).submit();
-        expect(rendered.emitted("submit")[0][0]).toStrictEqual(expected);
+        expect(rendered.emitted("submit")!![0][0]).toStrictEqual(expected);
         expect(result).toStrictEqual(expected);
     });
 
@@ -206,16 +189,16 @@ describe('Dynamic form component', function () {
         const rendered = getWrapper(invalidFormMeta, {}, shallowMount);
 
         await Vue.nextTick();
-        expect(rendered.emitted().validate.length).toBe(1);
-        expect(rendered.emitted().validate[0][0]).toBe(false);
+        expect(rendered.emitted().validate!!.length).toBe(1);
+        expect(rendered.emitted().validate!![0][0]).toBe(false);
     });
 
     it("initial validate event is emitted with true  value when when required values are present", async () => {
         const rendered = getWrapper(validFormMeta, {}, mount);
 
         await Vue.nextTick();
-        expect(rendered.emitted().validate.length).toBe(1);
-        expect(rendered.emitted().validate[0][0]).toBe(true);
+        expect(rendered.emitted().validate!!.length).toBe(1);
+        expect(rendered.emitted().validate!![0][0]).toBe(true);
     });
 
     it("validate event is emitted with false value when form becomes invalid", async () => {
@@ -243,8 +226,8 @@ describe('Dynamic form component', function () {
 
         await Vue.nextTick();
 
-        expect(rendered.emitted().validate.length).toBe(2);
-        expect(rendered.emitted().validate[1][0]).toBe(false);
+        expect(rendered.emitted().validate!!.length).toBe(2);
+        expect(rendered.emitted().validate!![1][0]).toBe(false);
     });
 
     it("validate event is emitted with true value when form becomes valid", async () => {
@@ -272,7 +255,7 @@ describe('Dynamic form component', function () {
 
         await Vue.nextTick();
 
-        expect(rendered.emitted().validate.length).toBe(2);
-        expect(rendered.emitted().validate[1][0]).toBe(true);
+        expect(rendered.emitted().validate!!.length).toBe(2);
+        expect(rendered.emitted().validate!![1][0]).toBe(true);
     });
 });

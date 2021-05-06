@@ -16,7 +16,6 @@
 
 <script lang="ts">
     import {BCol} from "bootstrap-vue";
-    import DynamicFormMultiSelect from "./DynamicFormMultiSelect.vue";
     import DynamicFormSelect from "./DynamicFormSelect.vue";
     import {DynamicControl} from "./types";
     import DynamicFormNumberInput from "./DynamicFormNumberInput.vue";
@@ -61,8 +60,6 @@
                 switch (this.formControl.type) {
                     case "select":
                         return "dynamic-form-select";
-                    case "multiselect":
-                        return "dynamic-form-multi-select";
                     case "number":
                         return "dynamic-form-number-input";
                 }
@@ -72,7 +69,6 @@
             BCol,
             DynamicFormNumberInput,
             DynamicFormSelect,
-            DynamicFormMultiSelect,
             HelpCircleIcon
         },
         directives: {

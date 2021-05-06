@@ -1,4 +1,4 @@
 import DynamicForm from './DynamicForm.vue';
 import Vue from "vue";
 
-Vue.component('vue-dynamic-form', DynamicForm);
+Vue.component('vue3-dynamic-form', DynamicForm);

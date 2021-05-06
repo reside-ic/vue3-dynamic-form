@@ -32,7 +32,7 @@
     } from "./types";
 
     interface Methods {
-        buildValue: (control: DynamicControl) => string | string[] | number | null
+        buildValue: (control: DynamicControl) => string | number | null
         submit: (e: Event) => DynamicFormData
         change: (newVal: DynamicControlSection, index: number) => void;
         confirm: (e: Event) => void
@@ -124,9 +124,7 @@
                 this.$emit("change", {...this.formMeta, controlSections})
             },
             buildValue(control: DynamicControl) {
-                if (control.type == "multiselect" && !control.value) {
-                    return []
-                } else return control.value == undefined ? null : control.value;
+                return control.value == undefined ? null : control.value;
             },
             submit(e: Event) {
                 if (e) {

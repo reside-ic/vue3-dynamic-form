@@ -4,5 +4,4 @@ declare module "*.vue" {
     export default Vue;
 }
 
-declare module '@riophae/vue-treeselect';
 declare module "vue-feather-icons";
