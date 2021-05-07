@@ -1,5 +1,5 @@
 import {mount, shallowMount} from "@vue/test-utils";
-import Vue from "vue";
+import {nextTick} from "vue";
 import DynamicFormControlSection from "../src/DynamicFormControlSection.vue";
 import DynamicFormControlGroup from "../src/DynamicFormControlGroup.vue";
 import {DynamicControlSection} from "../src/types";
@@ -42,25 +42,25 @@ describe('Dynamic form control section component', function () {
             }
         });
 
-        await Vue.nextTick();
+        await nextTick();
 
         expect(rendered.find("h3").classes()).toContain("cursor-pointer");
         expect(rendered.findAll(ChevronDownIcon).length).toBe(0);
         expect(rendered.findAll(ChevronUpIcon).length).toBe(1);
         expect(rendered.find(BCollapse).props("visible")).toBe(true);
 
-        await Vue.nextTick();
+        await nextTick();
 
         rendered.find("h3").trigger("click");
 
-        await Vue.nextTick();
+        await nextTick();
 
         expect(rendered.findAll(ChevronDownIcon).length).toBe(1);
         expect(rendered.findAll(ChevronUpIcon).length).toBe(0);
         expect(rendered.find(BCollapse).props("visible")).toBe(false);
 
         rendered.find("h3").trigger("click");
-        await Vue.nextTick();
+        await nextTick();
 
         expect(rendered.findAll(ChevronDownIcon).length).toBe(0);
         expect(rendered.findAll(ChevronUpIcon).length).toBe(1);
@@ -75,18 +75,18 @@ describe('Dynamic form control section component', function () {
             }
         });
 
-        await Vue.nextTick();
+        await nextTick();
 
         expect(rendered.find("h3").classes()).toContain("cursor-pointer");
         expect(rendered.findAll(ChevronDownIcon).length).toBe(1);
         expect(rendered.findAll(ChevronUpIcon).length).toBe(0);
         expect(rendered.find(BCollapse).props("visible")).toBe(false);
 
-        await Vue.nextTick();
+        await nextTick();
 
         rendered.find("h3").trigger("click");
 
-        await Vue.nextTick();
+        await nextTick();
 
         expect(rendered.findAll(ChevronDownIcon).length).toBe(0);
         expect(rendered.findAll(ChevronUpIcon).length).toBe(1);
@@ -140,11 +140,11 @@ describe('Dynamic form control section component', function () {
         expect(documentation.findAll(ChevronUpIcon).length).toBe(0);
         expect(documentation.find("ul").isVisible()).toBe(false);
 
-        await Vue.nextTick();
+        await nextTick();
 
         documentation.find("a").trigger("click");
 
-        await Vue.nextTick();
+        await nextTick();
 
         documentation = rendered.find(".documentation");
         expect(documentation.find(BCollapse).props("visible")).toBe(true);
@@ -195,7 +195,7 @@ describe('Dynamic form control section component', function () {
             }
         });
 
-        rendered.findAll(DynamicFormControlGroup).at(0)
+        rendered.findAllComponents(DynamicFormControlGroup)[0]
             .vm.$emit("confirm","Param");
         expect(rendered.emitted().confirm!!.length).toBe(1);
         expect(rendered.emitted().confirm!![0][0]).toBe("Param");

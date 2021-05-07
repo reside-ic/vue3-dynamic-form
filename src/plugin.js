@@ -1,4 +1,5 @@
 import DynamicForm from './DynamicForm.vue';
-import Vue from "vue";
+import {createApp} from "vue";
 
-Vue.component('vue3-dynamic-form', DynamicForm);
+const app = createApp({});
+app.component('vue3-dynamic-form', DynamicForm);

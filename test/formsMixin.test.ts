@@ -1,6 +1,6 @@
 
 import {shallowMount} from "@vue/test-utils";
-import FormsMixin from "../src/FormsMixin";
+import FormsMixin from "../src/FormsUtils";
 
 test('it assess if value is empty', () => {
     const wrapper = shallowMount(FormsMixin)

@@ -4,7 +4,7 @@ import DynamicFormControlGroup from "../src/DynamicFormControlGroup.vue";
 import DynamicFormControl from "../src/DynamicFormControl.vue";
 import {VTooltip} from 'v-tooltip';
 import {DynamicControlGroup, NumberControl, SelectControl} from "../src/types";
-import Vue from "vue";
+import {nextTick} from "vue";
 
 const tooltipSpy = jest.spyOn(VTooltip, "bind");
 
@@ -132,7 +132,7 @@ describe('Dynamic form control group component', function () {
             }
         });
 
-        rendered.findAll(DynamicFormControl).at(0)
+        rendered.findAllComponents(DynamicFormControl)[0]
             .vm.$emit("change", {...controlGroup.controls[0], value: 123});
 
         expect((rendered.emitted().change!![0][0] as DynamicControlGroup)
@@ -147,8 +147,8 @@ describe('Dynamic form control group component', function () {
             }
         });
 
-        expect(rendered.findAll(DynamicFormControl).length).toBe(2);
-        expect(rendered.findAll(DynamicFormControl).at(0).props("colWidth")).toBe("3");
+        expect(rendered.findAllComponents(DynamicFormControl).length).toBe(2);
+        expect(rendered.findAllComponents(DynamicFormControl)[0].props("colWidth")).toBe("3");
     });
 
     it("single controls are 6 cols", () => {
@@ -158,8 +158,8 @@ describe('Dynamic form control group component', function () {
             }
         });
 
-        expect(rendered.findAll(DynamicFormControl).length).toBe(1);
-        expect(rendered.findAll(DynamicFormControl).at(0).props("colWidth")).toBe("6");
+        expect(rendered.findAllComponents(DynamicFormControl).length).toBe(1);
+        expect(rendered.findAllComponents(DynamicFormControl)[0].props("colWidth")).toBe("6");
     });
 
     it("emits confirmEditing event when click event triggered", async() => {
@@ -170,8 +170,8 @@ describe('Dynamic form control group component', function () {
             }
         });
 
-        rendered.findAll(DynamicFormControl).at(0).trigger("click")
-        await Vue.nextTick();
+        rendered.findAllComponents(DynamicFormControl)[0].trigger("click")
+        await nextTick();
 
         expect(rendered.emitted().confirm!!.length).toBe(1);
     });
@@ -184,8 +184,8 @@ describe('Dynamic form control group component', function () {
             }
         });
 
-        rendered.findAll(DynamicFormControl).at(0).trigger("mousedown")
-        await Vue.nextTick();
+        rendered.findAll(DynamicFormControl)[0].trigger("mousedown")
+        await nextTick();
 
         expect(rendered.emitted().confirm!!.length).toBe(1);
     });

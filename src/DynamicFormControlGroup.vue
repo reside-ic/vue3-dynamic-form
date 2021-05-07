@@ -19,80 +19,70 @@
 </template>
 <script lang="ts">
     import {BCol, BRow} from "bootstrap-vue";
+    import {computed, defineComponent, PropType} from "vue";
     import {Control, DynamicControlGroup} from "./types";
     import DynamicFormControl from "./DynamicFormControl.vue";
     import {VTooltip} from 'v-tooltip';
     import {HelpCircleIcon} from "vue-feather-icons";
-    import FormsMixin from "./FormsMixin";
+    import FormsUtils from "./FormsUtils";
 
-    interface Methods {
-        anyValueEmpty: (controlGroup: DynamicControlGroup) => boolean
-        change: (newVal: Control, index: number) => void
-        confirm:(e: Event) => void
-    }
-
-    interface Computed {
-        colWidth: string,
-        required: boolean
-        helpText: string | undefined
-    }
-
-    interface Props {
-        controlGroup: DynamicControlGroup
-        requiredText?: string
-        selectText?: string
-    }
-
-    export default FormsMixin.extend<{}, Methods, Computed, Props>({
+    export default defineComponent({
         name: "DynamicFormControlGroup",
         props: {
-            controlGroup: Object,
+            modelValue: { type: Object as PropType<DynamicControlGroup>, required: true},
             requiredText: String,
             selectText: String
         },
-        model: {
-            prop: "controlGroup",
-            event: "change"
+        setup(props, context) {
+            const utils = FormsUtils();
+
+            function anyValueEmpty(controlGroup: DynamicControlGroup){
+                return !!controlGroup.controls.find(c => utils.valueIsEmpty(c.value))
+            }
+
+            function change(newVal: Control, index: number) {
+                const controls = [...props.modelValue.controls];
+                controls[index] = newVal;
+                context.emit("update:modelValue", {...props.modelValue, controls})
+            }
+
+            function confirm(e: Event) {
+               context.emit("confirm", e)
+            }
+
+            const colWidth = computed(() => {
+                const numCols = props.modelValue.controls.length;
+                if (numCols == 1) {
+                    return "6"
+                } else {
+                    return "3"
+                }
+            });
+
+            const required = computed(() => {
+                return props.modelValue.controls.length == 1
+                    && props.modelValue.controls[0].required
+            });
+
+            const helpText = computed(() => {
+                return props.modelValue.controls.length == 1 ?
+                    props.modelValue.controls[0].helpText : ""
+            });
+
+            return {
+                anyValueEmpty,
+                change,
+                confirm,
+                colWidth,
+                required,
+                helpText
+            }
         },
         components: {
             BRow,
             BCol,
             DynamicFormControl,
             HelpCircleIcon
-        },
-        directives: {
-            tooltip: VTooltip
-        },
-        methods: {
-            anyValueEmpty(controlGroup: DynamicControlGroup){
-                return !!controlGroup.controls.find(c => this.valueIsEmpty(c.value))
-            },
-            change(newVal: Control, index: number) {
-                const controls = [...this.controlGroup.controls];
-                controls[index] = newVal;
-                this.$emit("change", {...this.controlGroup, controls})
-            },
-          confirm(e: Event) {
-              this.$emit("confirm", e)
-          }
-        },
-        computed: {
-            colWidth() {
-                const numCols = this.controlGroup.controls.length;
-                if (numCols == 1) {
-                    return "6"
-                } else {
-                    return "3"
-                }
-            },
-            required() {
-                return this.controlGroup.controls.length == 1
-                    && this.controlGroup.controls[0].required
-            },
-            helpText() {
-                return this.controlGroup.controls.length == 1 ?
-                    this.controlGroup.controls[0].helpText : ""
-            }
         }
     });
 

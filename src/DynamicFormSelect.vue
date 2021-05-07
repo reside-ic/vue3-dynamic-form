@@ -1,6 +1,6 @@
 <template>
     <select class="form-control"
-            v-model="value"
+            v-model="valueInternal"
             :name="formControl.name"
             :required="formControl.required">
         <option v-if="!formControl.excludeNullOption" value>{{selectText}}</option>
@@ -13,48 +13,36 @@
 </template>
 
 <script lang="ts">
-    import Vue from "vue";
+    import {computed, defineComponent, onMounted, PropType} from "vue";
     import {BFormSelect} from "bootstrap-vue";
     import {SelectControl} from "./types";
 
-    interface Props {
-        formControl: SelectControl
-        selectText?: string
-    }
-
-    interface Computed {
-        value: string
-    }
-
-    export default Vue.extend<{}, {}, Computed, Props>({
+    export default defineComponent({
         name: "DynamicFormSelect",
         props: {
-            formControl: {
-                type: Object
-            },
+            modelValue: { type: Object as PropType<SelectControl>, required: true },
             selectText: String
         },
-        model: {
-            prop: "formControl",
-            event: "change"
-        },
-        computed: {
-            value: {
+        setup(props, context) {
+            const valueInternal = computed(() => ({
                 get() {
-                    return this.formControl.value || ""
+                    return props.modelValue.value || "";
                 },
                 set(newVal: string) {
-                    this.$emit("change", {...this.formControl, value: newVal});
+                    context.emit("update:modelValue", {...props.modelValue, value: newVal});
                 }
-            }
+            }));
+
+            onMounted(() => {
+                if (props.modelValue.excludeNullOption && !props.modelValue.value) {
+                    valueInternal.value.set(props.modelValue.options[0].id);
+                }
+            });
+
+            return {valueInternal};
         },
         components: {
             BFormSelect
-        },
-        mounted() {
-            if (this.formControl.excludeNullOption && !this.formControl.value) {
-                this.value = this.formControl.options[0].id;
-            }
         }
     })
 </script>

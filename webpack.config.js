@@ -1,4 +1,4 @@
-const VueLoaderPlugin = require('vue-loader/lib/plugin');
+const { VueLoaderPlugin } = require('vue-loader');
 const path = require('path');
 const merge = require('webpack-merge');
 
@@ -6,6 +6,9 @@ const config = {
     mode: "production",
     resolve: {
         extensions: ['.ts', '.js', '.vue', '.json']
+    },
+    optimization: {
+        minimize: false
     },
     module: {
         rules: [
@@ -47,7 +50,7 @@ module.exports = [
         output: {
             filename: 'js/index.js',
             libraryTarget: 'umd',
-            library: 'vueDynamicForm',
+            library: 'vue3DynamicForm',
             umdNamedDefine: true
         },
     }),
@@ -59,7 +62,7 @@ module.exports = [
         output: {
             filename: 'js/vue3-dynamic-form.min.js',
             libraryTarget: 'window',
-            library: 'vueDynamicForm'
+            library: 'vue3DynamicForm'
         }
     })
 ];

@@ -16,53 +16,47 @@
 
 <script lang="ts">
     import {BCol} from "bootstrap-vue";
+    import {computed, defineComponent, PropType} from "vue";
     import DynamicFormSelect from "./DynamicFormSelect.vue";
     import {DynamicControl} from "./types";
     import DynamicFormNumberInput from "./DynamicFormNumberInput.vue";
     import {VTooltip} from 'v-tooltip'
     import {HelpCircleIcon} from "vue-feather-icons";
-    import FormsMixin from "./FormsMixin";
 
-    interface Computed {
-        dynamicComponent: string,
-        formControlLocal: DynamicControl
-    }
-
-    interface Props {
-        formControl: DynamicControl,
-        colWidth: string
-        requiredText?: string
-        selectText?: string
-    }
-
-    export default FormsMixin.extend<{}, unknown, Computed, Props>({
+    export default defineComponent({
         name: "DynamicFormControl",
         model: {
             prop: "formControl",
             event: "change"
         },
         props: {
-            formControl: Object,
+            modelValue: {type: Object as PropType<DynamicControl>, required: true},
             colWidth: String,
             requiredText: String,
             selectText: String
         },
-        computed: {
-            formControlLocal: {
+        setup(props, context) {
+            const formControlLocal = computed(() => ({
                 get() {
-                    return this.formControl
+                    return props.modelValue;
                 },
                 set(newVal: DynamicControl) {
-                    this.$emit("change", newVal);
+                    context.emit("update:modelValue", newVal);
                 }
-            },
-            dynamicComponent() {
-                switch (this.formControl.type) {
+            }));
+
+            const dynamicComponent = computed(() => {
+                switch (props.modelValue.type) {
                     case "select":
                         return "dynamic-form-select";
                     case "number":
                         return "dynamic-form-number-input";
                 }
+            });
+
+            return {
+                formControlLocal,
+                dynamicComponent
             }
         },
         components: {

@@ -1,6 +1,6 @@
 <template>
     <b-form :ref="id" :id="id" class="dynamic-form" novalidate>
-        <dynamic-form-control-section v-for="(section, index) in formMeta.controlSections"
+        <dynamic-form-control-section v-for="(section, index) in modelValue.controlSections"
                                       :key="index"
                                       :control-section="section"
                                       @confirm="confirm"
@@ -19,7 +19,7 @@
 
 <script lang="ts">
 
-    import Vue from "vue";
+    import {computed, defineComponent, onMounted, PropType, watch} from "vue";
     import {BForm} from "bootstrap-vue";
     import DynamicFormControlGroup from "./DynamicFormControlGroup.vue";
     import DynamicFormControlSection from "./DynamicFormControlSection.vue";
@@ -31,78 +31,39 @@
         DynamicFormMeta
     } from "./types";
 
-    interface Methods {
-        buildValue: (control: DynamicControl) => string | number | null
-        submit: (e: Event) => DynamicFormData
-        change: (newVal: DynamicControlSection, index: number) => void;
-        confirm: (e: Event) => void
-    }
-
-    interface Computed {
-        controls: Control[]
-        disabled: boolean
-    }
-
-    interface Props {
-        formMeta: DynamicFormMeta,
-        includeSubmitButton?: boolean
-        submitText?: string
-        id?: string
-        requiredText?: string
-        selectText?: string
-    }
-
-    const props = {
-        id: {
-            type: String,
-            default: "d-form"
-        },
-        submitText: {
-            type: String,
-            default: "Submit"
-        },
-        includeSubmitButton: {
-            type: Boolean,
-            default: true
-        },
-        formMeta: {
-            type: Object
-        },
-        requiredText: {
-            type: String,
-            default: "required"
-        },
-        selectText: {
-            type: String,
-            default: "Select..."
-        }
-    };
-
-    export default Vue.extend<{}, Methods, Computed, Props>({
+    export default defineComponent({
         name: "DynamicForm",
-        props: props,
-        model: {
-            prop: "formMeta",
-            event: "change"
+        props: {
+            id: {
+                type: String,
+                default: "d-form"
+            },
+            submitText: {
+                type: String,
+                default: "Submit"
+            },
+            includeSubmitButton: {
+                type: Boolean,
+                default: true
+            },
+            modelValue: {
+                type: Object as PropType<DynamicFormMeta>,
+                required: true
+            },
+            requiredText: {
+                type: String,
+                default: "required"
+            },
+            selectText: {
+                type: String,
+                default: "Select..."
+            }
         },
-        components: {
-            BForm,
-            DynamicFormControlGroup,
-            DynamicFormControlSection
-        },
-        created() {
-            this.formMeta.controlSections.map(s => {
-                s.controlGroups.map(g => {
-                    g.controls.map(c => {
-                        c.value = this.buildValue(c)
-                    })
-                })
-            });
-        },
-        computed: {
-            controls() {
+        setup(props, context) {
+
+            const controls = computed(() => {
                 const controls: Control[] = [];
-                this.formMeta.controlSections.map(s => {
+                props.modelValue.controlSections.map(s => {
                     s.controlGroups.map(g => {
                         g.controls.map(c => {
                             controls.push(c);
@@ -110,45 +71,70 @@
                     })
                 });
                 return controls;
-            },
-            disabled() {
-                return this.controls
+            });
+
+            const disabled = computed(() => {
+                return controls.value
                     .filter(c => c.required && (c.value == null || c.value == ""))
                     .length > 0
-            }
-        },
-        methods: {
-            change(newVal: DynamicControlSection, index: number) {
-                const controlSections = [...this.formMeta.controlSections];
+            });
+
+            function change(newVal: DynamicControlSection, index: number) {
+                const controlSections = [...props.modelValue.controlSections];
                 controlSections[index] = newVal;
-                this.$emit("change", {...this.formMeta, controlSections})
-            },
-            buildValue(control: DynamicControl) {
+                context.emit("update:modelValue", {...props.modelValue, controlSections})
+            }
+
+            function buildValue(control: DynamicControl) {
                 return control.value == undefined ? null : control.value;
-            },
-            submit(e: Event) {
+            }
+
+            function submit(e: Event) {
                 if (e) {
                     e.preventDefault();
                 }
-                const result = this.controls
+                const result = controls.value
                     .reduce((formData, control) => {
-                        formData[control.name] = this.buildValue(control);
+                        formData[control.name] = buildValue(control);
                         return formData
                     }, {} as DynamicFormData);
-                this.$emit("submit", result);
+                context.emit("submit", result);
                 return result;
-            },
-          confirm(e: Event) {
-            this.$emit("confirm", e)
-          }
-        },
-        watch: {
-            disabled: function(value: Boolean) {
-                this.$emit("validate", !value);
+            }
+
+            function confirm(e: Event) {
+                context.emit("confirm", e)
+            }
+
+            props.modelValue.controlSections.map((s: DynamicControlSection) => {
+                s.controlGroups.map(g => {
+                    g.controls.map(c => {
+                        c.value = buildValue(c)
+                    })
+                })
+            });
+
+            onMounted(() => {
+                context.emit("validate", !disabled.value);
+            });
+
+            watch(disabled, (value: Boolean) => {
+                context.emit("validate", !value);
+            });
+
+            return {
+                controls,
+                disabled,
+                change,
+                buildValue,
+                submit,
+                confirm
             }
         },
-        mounted() {
-            this.$emit("validate", !this.disabled);
+        components: {
+            BForm,
+            DynamicFormControlGroup,
+            DynamicFormControlSection
         }
     })
 </script>
